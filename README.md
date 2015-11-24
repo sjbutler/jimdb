@@ -20,6 +20,7 @@ jimdb requires Java v8.
 * SLF4J - jimdb uses SLF4J for logging and requires the slf4j-api-1.7.x jar 
   file to be on the classpath. You will also need the relevant slf4j jar file 
   for your chosen logging system.
+* Apache Commons Collections - v4.0 or greater
 
 ## Documentation
 The API is documented in the javadocs, which are in a zip archive in the docs 

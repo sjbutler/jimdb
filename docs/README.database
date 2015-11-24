@@ -1,0 +1,166 @@
+SCHEMA
+------
+All database tables belong to the schema SVM, and all table names must be prefixed with SVM. The 
+database schema centres on the program_entities table, which follows the AST using 
+the container_uid and entity_uid columns to identify the current and containing program entities. 
+The 'fk' suffix to a column name identifies foreign keys. The 'is_anonymous' column identifies program 
+entities without an identifier name. In those cases the identifier name key points to the 
+identifier '#anonymous#'.
+
+ --------------------------------
+ | PROGRAM_ENTITIES             |
+ --------------------------------
+ | program_entity_key           |
+ | project_key_fk               |
+ | package_key_fk               |
+ | identifier_name_key_fk       |
+ | container_uid VARCHAR(255)   |
+ | entity_uid VARCHAR(255)      |
+ | species_name_key_fk          |
+ | type_name_key_fk             |
+ | method_signature_key_fk      |
+ | is_anonymous BOOLEAN         |
+ | file_name_key_fk INT         |
+ | is_array BOOLEAN             |
+ | is_loop_control_var BOOLEAN  |
+ | start_line_number INT        |
+ | start_column INT             |
+ | end_line_number INT          |
+ | end_column INT               |
+ --------------------------------
+
+ Unique identifier names are stored with a count of their component words, and are referenced by both 
+ program entities and type names.
+
+ --------------------------------
+ | IDENTIFIER_NAMES             |
+ --------------------------------
+ | identifier_name VARCHAR(255) |
+ | identifier_name_key          |
+ | components  INT              |
+ --------------------------------
+
+Unique component words are recorded and linked to identifier names through a cross reference table 
+that records the position within the identifier name where the component word is found.
+
+ --------------------------------
+ | COMPONENT_WORDS              |
+ --------------------------------
+ | component_word VARCHAR(255)  |
+ | component_word_key           |
+ --------------------------------
+
+ --------------------------------
+ | COMPONENT_WORDS_XREF         |
+ --------------------------------
+ | component_word_key_fk        |
+ | identifier_name_key_fk       |
+ | position INT                 |
+ --------------------------------
+
+
+Unique type names are stored with a reference to the identifier name used to specify the type. The 
+fully qualified name of the type is recorded if it can be resolved.
+
+ --------------------------------
+ | TYPE_NAMES                   |
+ --------------------------------
+ | type_name VARCHAR(255)       |
+ | type_name_key                |
+ | identifier_name_key_fk       |
+ --------------------------------
+
+
+Type names involved in inheritance are cross referenced with program entities using two tables one 
+of which corresponds to class based inheritance and the other to type based inheritance.
+
+ --------------------------------
+ | SUPER_CLASS_XREF             |
+ --------------------------------
+ | sub_class_entity_key_fk      |
+ | super_class_name_key_fk      |
+ --------------------------------
+
+ --------------------------------
+ | SUPER_TYPE_XREF              |
+ --------------------------------
+ | sub_type_entity_key_fk       |
+ | super_type_name_key_fk       |
+ --------------------------------
+
+Unique method signatures are recorded for constructor and method program entities.
+ --------------------------------
+ | METHOD_SIGNATURES            |
+ --------------------------------
+ | method_signature_key         |
+ | method_signature VARCHAR(512)|
+ --------------------------------
+
+A read only set of species is used to classify program entities. The values of the species_name
+column are: annotation member, annotation, class, constructor, enum constant, enum, field, 
+formal argument, initialiser, interface, label name, local, local class, member class, 
+method, & nested interface  
+ --------------------------------
+ | SPECIES                      |
+ --------------------------------
+ | species_name_key             |
+ | species_name VARCHAR(20)     |
+ --------------------------------
+
+A read only set of modifiers is provided and multiple modifiers linked to program entities 
+through a cross reference table. The members are: abstract, final, native, private, protected, 
+public, static, strictfp, synchronized, transient & volatile.
+
+ --------------------------------
+ | MODIFIERS                    |
+ --------------------------------
+ | modifier VARCHAR(20)         |
+ | modifier_key                 |
+ --------------------------------
+
+ --------------------------------
+ | MODIFIERS_XREF               |
+ --------------------------------
+ | modifier_key_fk              |
+ | program_entity_key_fk        |
+ --------------------------------
+
+
+Unique package names are stored in a table, and cross referenced with projects. This is done to save
+space when storing multiple projects, which are distinguished by a project name and version pair
+
+ --------------------------------
+ | PACKAGE_NAMES                |
+ --------------------------------
+ | package_name_key             |
+ | package_name VARCHAR(255)    |
+ --------------------------------
+
+ --------------------------------
+ | PACKAGES                     |
+ --------------------------------
+ | package_name_key_fk          |
+ | package_key                  |
+ | project_key_fk               |
+ --------------------------------
+
+ --------------------------------
+ | PROJECTS                     |
+ --------------------------------
+ | project_key                  |
+ | project_name VARCHAR(255)    |
+ | project_version VARCHAR(255) |
+ --------------------------------
+
+
+Unique file names are recorded for the program entities where they are found.
+ --------------------------------
+ | FILES                        |
+ --------------------------------
+ | file_name VARCHAR(255)       |
+ | file_name_key                |
+ --------------------------------
+
+Any individual file is identified by the combination of project anme and version, package name
+and file name. 
+
