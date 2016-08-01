@@ -28,9 +28,9 @@ folder.
 
 ## Citation
 
-If you use jimdb to support academic research please cite the following paper:
+If you use jimdb to support academic research please cite: 
+Butler, Simon (2016) Analysing Java Identifier Names, PhD thesis, The Open University.
 
-     [details to be confirmed]
 
 ## Caveat
 
